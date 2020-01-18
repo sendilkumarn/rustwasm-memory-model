@@ -1,5 +1,3 @@
-#![no_std]
-
 use core::panic::PanicInfo;
 use core::slice::from_raw_parts_mut;
 
@@ -7,7 +5,7 @@ use std::alloc::{alloc, dealloc,  Layout};
 use std::mem;
 
 #[no_mangle]
-fn malloc(size: usize) -> *mut u8 {
+pub fn malloc(size: usize) -> *mut u8 {
     let align = std::mem::align_of::<usize>();
     if let Ok(layout) = Layout::from_size_align(size, align) {
         unsafe {
@@ -21,11 +19,11 @@ fn malloc(size: usize) -> *mut u8 {
             }
         }
     }
-    std::process::abort
+    std::process::abort()
 }
 
 #[no_mangle]
-fn accumulate(data: *mut u8, len: usize) -> i32 {
+pub fn accumulate(data: *mut u8, len: usize) -> i32 {
     let y = unsafe { std::slice::from_raw_parts(data as *const u8, len) };
     let mut sum = 0;
     for i in 0..len {
@@ -35,7 +33,7 @@ fn accumulate(data: *mut u8, len: usize) -> i32 {
 }
 
 #[no_mangle]
-fn memory_to_js() {
+pub fn memory_to_js() {
     let obj: &mut [u8];
 
     unsafe {
@@ -45,7 +43,3 @@ fn memory_to_js() {
     obj[0] = 13;
 }
 
-#[panic_handler]
-fn panic(_info: &PanicInfo) -> !{
-    loop{}
-}
